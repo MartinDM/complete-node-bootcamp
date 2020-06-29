@@ -1,12 +1,28 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const morgan = require('morgan');
 const port = 3000;
 
-// Middleware
+/* Middleware
+   Define at the start of the req/response cycle
+*/
+
 // Add body data to req object
+app.use(morgan('dev'))
 app.use(express.json());
 
+// Signature always the same
+app.use( (req, res, next) => {
+  // Call next to progress the response
+  next();
+})
+
+// Add a requestedAt middleware time
+app.use( (req, res, next) => {
+  req.reqTime = new Date().toISOString();
+  next();
+})
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`))
 
@@ -19,12 +35,16 @@ app.get('/', (req, res) => {
   })
 })
 
+/*  Controllers */
+
 const getAllTours = (req, res) => {
+  console.log(req.reqTime)
   res
   .status(200)
   // Follows JSend format
   .json({
     status: 'success',
+    requestedAt: req.reqTime,
     data: { 
       tours 
     },
@@ -127,14 +147,79 @@ const deleteTour = (req, res) => {
   });
 }
 
-// Longer format
-//app.post('/api/v1/tours', createTour)
-//app.patch('/api/v1/tours/:id', updateTour)
-//app.post('/api/v1/tours', createTour)
+const getAllUsers = (req, res) => {
+  res.status(500)
+  // Internal server error
+  .json( {
+      status: 'success',
+      message: 'Route not yet defined'
+  })
+}
 
-// Refactored. Chained actions against a single url
-app.route('/api/v1/tours').get(getAllTours).post(createTour)
-app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour)
+const createUser = (req, res) => {
+  res.status(500)
+  // Internal server error
+  .json( {
+      status: 'success',
+      message: 'Route not yet defined'
+  })
+}
+const getUser = (req, res) => {
+  res.status(500)
+  // Internal server error
+  .json( {
+      status: 'success',
+      message: 'Route not yet defined'
+  })
+}
+
+const deleteUser = (req, res) => {
+  res.status(500)
+  // Internal server error
+  .json( {
+      status: 'success',
+      message: 'Route not yet defined'
+  })
+}
+
+const updateUser = (req, res) => {
+  res.status(500)
+  // Internal server error
+  .json( {
+      status: 'success',
+      message: 'Route not yet defined'
+    })
+  }
+  
+// Longer format
+// app.post('/api/v1/tours', createTour)
+// app.patch('/api/v1/tours/:id', updateTour)
+// app.post('/api/v1/tours', createTour)
+
+// 'Sub' application within /tours resource
+const tourRouter = express.Router();
+const userRouter = express.Router();
+
+// 'Sub' applications within each resource
+tourRouter.route('/')
+.get(getAllTours)
+.post(createTour);
+
+tourRouter.route('/:id')
+.get(getTour).patch(updateTour)
+.delete(deleteTour)
+
+userRouter.route('/')
+.get(getAllUsers)
+.post(createUser)
+userRouter.route('/:id')
+.get(getUser)
+.patch(updateUser)
+.delete(deleteUser)
+
+// Mount routes
+app.use('/api/v1/tours', tourRouter)
+app.use('/api/v1/users', userRouter)
 
 app.listen(port, ()=>{
   console.log(`Running on Port ${port}`)
