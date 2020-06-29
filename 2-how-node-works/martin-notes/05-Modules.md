@@ -21,6 +21,7 @@ Module code is wrapped in an IEFE function which give access to:
 ```
 
 ### Execute
+
 ### Return exports
 - `require` function returns **exports** of the required module
 - `module.exports` is the returned object
