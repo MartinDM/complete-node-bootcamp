@@ -51,4 +51,7 @@
 - Ends with `res.send`
 
 # Creating middleware
+- Middleware should do one thing in Express philosophy
+- Route handlers just do what they say, without being concerned with prior validation eg. valid params
+- Handle with upstream middleware
 

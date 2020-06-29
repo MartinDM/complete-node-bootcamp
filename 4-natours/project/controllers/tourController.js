@@ -4,8 +4,24 @@ const fs = require('fs');
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`))
 
-
 /*  Controllers */
+
+// Param middlware has extra argument for the param on the url
+// Only runs for paths after /tours
+// Prevents route handlers running if invalid id passed
+exports.checkId = (req, res, next, val) => {
+  const tourId = parseInt(val);
+  const tour = tours.find( tour => tour.id === tourId );
+  if ( !tour ) {
+    return res
+    .status(404)
+    .json({
+      status: "fail",
+      message: 'No tour exists with that ID'
+    })
+  }
+  next();
+}
 
 exports.getAllTours = (req, res) => {
   console.log(req.reqTime)
@@ -26,17 +42,6 @@ exports.getTour = (req, res) => {
   const tourId = parseInt(req.params.id);
   console.log(req.params)
   const tour = tours.find( tour => tour.id === tourId );
-  // Could also check id against tours length
-  // if tourId > tour.length
-  if ( !tour ) {
-    return res
-    .status(404)
-    .json({
-      status: "fail",
-      message: 'No tour of that id',
-      results: 0
-    })
-  }
   res
   .status(200)
   // Follows JSend format
@@ -71,19 +76,7 @@ exports.createTour = (req, res) => {
     }); 
 }
 
-exports.updateTour = (req, res) => {
-  const tourId = parseInt(req.params.id);
-  const tour = tours.find( tour => tour.id === tourId );
-  console.log(tour)
-  console.log(tourId)
-  if ( !tour ) {
-    return res
-    .status(404)
-    .json({
-      status: "fail",
-      message: 'No tour exists with that ID'
-    })
-  }
+exports.updateTour = (req, res) => { 
   res.status(200)
   // Follows JSend format
   // Patch operation here
@@ -96,18 +89,6 @@ exports.updateTour = (req, res) => {
 }
 
 exports.deleteTour = (req, res) => {
-  const tourId = parseInt(req.params.id);
-  const tour = tours.find( tour => tour.id === tourId );
-  console.log(tour)
-  console.log(tourId)
-  if ( !tour ) {
-    return res
-    .status(404)
-    .json({
-      status: "fail",
-      message: 'No tour exists with that ID'
-    })
-  }
   res.status(204)
   // Follows JSend format
   // Patch operation here
