@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`))
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`))
 
 /*  Controllers */
 
@@ -14,13 +15,50 @@ exports.checkId = (req, res, next, val) => {
   const tour = tours.find( tour => tour.id === tourId );
   if ( !tour ) {
     return res
-    .status(404)
+    .status(404) // Resource not found
     .json({
       status: "fail",
       message: 'No tour exists with that ID'
     })
   }
   next();
+}
+
+// Check for right data for creating tour
+// Added to POST handler stack
+exports.checkBody = (req, res, next) => {
+  const tourData = req.body;
+  if ( !tourData.price || !tourData.name ) {
+    return res
+    .status(400) // Bad request
+    .json({
+      status: "fail",
+      message: 'Tour must have a name and price'
+    })
+  }
+  next();
+}
+
+exports.createTour = (req, res) => {
+  const data = req.body;
+  const newId = tours[tours.length -1].id + 1;
+
+  // Copy source object and add a property
+  const newTour = Object.assign({ id: newId }, req.body);
+  tours.push(newTour)
+  
+  // Write to server here
+  fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours), ( err ) => {
+      console.log(err)
+      res.status(201) // 'created' status
+      res.json({
+        status: 'success',
+        data: {
+          tour: newTour
+        }
+      })
+    }); 
 }
 
 exports.getAllTours = (req, res) => {
@@ -54,27 +92,7 @@ exports.getTour = (req, res) => {
   })
 }
 
-exports.createTour = (req, res) => {
-  const data = req.body;
-  const newId = tours[tours.length -1].id + 1;
 
-  // Copy source object and add a property
-  const newTour = Object.assign({ id: newId }, req.body);
-  tours.push(newTour)
-  
-  // Write to server here
-  fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`,
-    JSON.stringify(tours), ( err ) => {
-      console.log(err)
-      res.status(201) // 'created' status
-      res.json({
-        status: 'success',
-        data: {
-          tour: newTour
-        }
-      })
-    }); 
-}
 
 exports.updateTour = (req, res) => { 
   res.status(200)

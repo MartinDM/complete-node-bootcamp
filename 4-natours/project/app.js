@@ -12,6 +12,8 @@ const userRouter = require('./routes/userRoutes')
 // Add body data to req object
 app.use(morgan('dev'))
 app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
+
 app.use( (req, res, next) => {
   next();
 });
@@ -33,8 +35,8 @@ app.get('/', (req, res) => {
 
 /* Mount Routes
  'Sub' applications */
-app.use('/api/v1/tours', tourRouter)
-app.use('/api/v1/users', userRouter)
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
   
 // Longer format
 // app.post('/api/v1/tours', createTour)

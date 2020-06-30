@@ -55,3 +55,10 @@
 - Route handlers just do what they say, without being concerned with prior validation eg. valid params
 - Handle with upstream middleware
 
+## Codes
+
+- `201`: Created
+- `200`: OK
+- `204`: No content (Deleted)
+- `400`: Bad request
+- `404`: Resource not found
