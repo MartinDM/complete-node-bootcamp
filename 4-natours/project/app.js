@@ -1,3 +1,5 @@
+// Node process.env now has the keys and values in .env file
+require('dotenv').config({path: './config.env'});
 const express = require('express');
 const app = express();
 const fs = require('fs');
@@ -10,7 +12,11 @@ const userRouter = require('./routes/userRoutes')
 */
 
 // Add body data to req object
-app.use(morgan('dev'))
+if( process.env.NODE_ENV === 'development' ) {
+  // Allow logger only in dev mode
+  app.use(morgan('dev'))
+}
+
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
