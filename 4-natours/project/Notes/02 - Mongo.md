@@ -28,3 +28,8 @@
 - `updateOne()`, `updateMany()`. Update will only happen on first if many queries are returned.
 
 { "name": "Epic tour", "price": 550, rating: 4.3 },{ "name": "Epic USA tour", "price": 650, "rating": 4.8 },{ "name": "UK tour", "price": 250, "rating": 4.9, "difficulty": "easy" }
+
+## Models
+- Writing new models with extra props not defined in the schema are ignored
+- Pass 'validators' to Schema such as `unique: true` or `required keys. Specify on the Schema.
+- 'Create' methods will use `new MyModel()` and pass in `req.body`
