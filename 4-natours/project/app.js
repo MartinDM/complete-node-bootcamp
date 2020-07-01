@@ -1,11 +1,11 @@
 // Node process.env now has the keys and values in .env file
-require('dotenv').config({path: './config.env'});
 const express = require('express');
 const app = express();
 const fs = require('fs');
 const morgan = require('morgan');
 const tourRouter = require('./routes/tourRoutes')
 const userRouter = require('./routes/userRoutes')
+
 
 /* Middleware
    Define at the start of the req/response cycle

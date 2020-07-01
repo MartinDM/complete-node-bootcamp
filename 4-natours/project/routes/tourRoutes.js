@@ -5,9 +5,9 @@ const tourController = require('./../controllers/tourController');
 
 router.route('/') // tours
 .get(tourController.getAllTours)
-.post(tourController.checkBody, tourController.createTour)
+.post(tourController.createTour)
 
-router.param('id', tourController.checkId); // tours/id
+//router.param('id', tourController.checkId); // tours/id
 
 router.route('/:id') // tours/id
 .get(tourController.getTour).patch(tourController.updateTour)
