@@ -1,10 +1,10 @@
-const app = require('./app');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const app = require('./app');
 require('dotenv').config({path: './config.env'});
 
 // Saved connection string in env file
 const DB = process.env.DB.replace('<PASSWORD>', process.env.DB_PASS);
-
 // Options to handle deprecation warnings
 // Can connect locally too
 mongoose.connect(DB, {

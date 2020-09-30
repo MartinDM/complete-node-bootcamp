@@ -6,7 +6,8 @@ const router = express.Router();
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)) */
   
 /*  Models */
-const Tour = require('../models/tourModel')
+const Tour = require('../models/tourModel');
+const { query } = require('express');
 
 /*  Controllers */
 
@@ -40,14 +41,46 @@ exports.createTour = async (req, res) => {
 exports.getAllTours = async (req, res) => {
 
   try {
-    // Mongoose wrapper around 'find()' method on the DB CLI
-    const tours = await Tour.find();
+    console.log(req.query)
+    
+    // Build query:
+    // Filter out some query params fields if they are passed in
+    const queryObj = { ...req.query }
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach( el => delete queryObj[el] );
+    
+    // Advanced filtering
+    console.log(queryObj)
+    let queryStr = JSON.stringify(queryObj)
+
+    // Find operators in the query string
+    // Look for gte, gt, lt, lte and replace with dollar prepend
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    
+    const query = Tour.find(JSON.parse(queryStr));
+
+    // Sorting
+    if ( req.query.sort ){
+      const sortBy = req.query.sort.split(',').join(' ');
+      // Mongoose Document methods available on the query as it's an instance of 'Tour'
+      query = query.sort(sortBy);
+    } else {
+      console.log('foo')
+      query = query.sort('-createdAt');
+    }
+    
+    // Await the modified query
+    const tours = await query;
+
+    // Mongoose query methods if not using params ^
+    /* .where('duration')
+    .equals(5) */
     res
     .status(200)
     // Follows JSend format
     .json({
       status: 'success',
-      data: { 
+      data: {
         tours 
       },
       results: tours.length

@@ -7,7 +7,8 @@
     "start": "npm run start:dev",
     "start:dev": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "import-data": "nodemon dev-data/import-dev-data.js --import"
   },
   "keywords": [],
   "author": "",
