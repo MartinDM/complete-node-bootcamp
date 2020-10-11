@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const apiFeatures = require('../utils/apiFeatures');
 
 // Data form local file
 /* const tours = JSON.parse(
@@ -10,6 +11,14 @@ const Tour = require('../models/tourModel');
 const { query } = require('express');
 
 /*  Controllers */
+
+exports.aliasTopTours = async (req, res, next) => {
+    console.log('middleware');
+    req.query.limit = '5';
+    req.query.sort = '-ratingsAverage';
+    req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+    next();
+}
 
 exports.createTour = async (req, res) => {
   // const newTour = new Tour({})
@@ -41,36 +50,18 @@ exports.createTour = async (req, res) => {
 exports.getAllTours = async (req, res) => {
 
   try {
-    console.log(req.query)
-    
-    // Build query:
-    // Filter out some query params fields if they are passed in
-    const queryObj = { ...req.query }
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach( el => delete queryObj[el] );
-    
-    // Advanced filtering
-    console.log(queryObj)
-    let queryStr = JSON.stringify(queryObj)
-
-    // Find operators in the query string
-    // Look for gte, gt, lt, lte and replace with dollar prepend
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-    
-    const query = Tour.find(JSON.parse(queryStr));
-
-    // Sorting
-    if ( req.query.sort ){
-      const sortBy = req.query.sort.split(',').join(' ');
-      // Mongoose Document methods available on the query as it's an instance of 'Tour'
-      query = query.sort(sortBy);
-    } else {
-      console.log('foo')
-      query = query.sort('-createdAt');
-    }
-    
     // Await the modified query
-    const tours = await query;
+    // Each method on the api has a return statement, allowing for chaining
+    
+    // Passing in the query object and the query string from Express
+    const features = new apiFeatures( Tour.find(), req.query )
+      // Add things to the query...
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate()
+    // ...Store it as tours
+    const tours = await features.query;
 
     // Mongoose query methods if not using params ^
     /* .where('duration')
