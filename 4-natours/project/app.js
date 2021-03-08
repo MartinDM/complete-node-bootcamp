@@ -6,7 +6,8 @@ const morgan = require('morgan');
 const tourRouter = require('./routes/tourRoutes')
 const userRouter = require('./routes/userRoutes')
 
-
+app.set('view-engine', 'pug');
+app.set('views', './views');
 /* Middleware
    Define at the start of the req/response cycle
 */

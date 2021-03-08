@@ -25,6 +25,7 @@ myEmitter.emit("newSale", 9);
 
 //////////////////
 
+// `Server` is an instance of EventEmitter class
 const server = http.createServer();
 
 server.on("request", (req, res) => {

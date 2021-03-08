@@ -16,3 +16,8 @@ Single-threaded, I/O, event-driven.
 ## Not ideal for
 - Heavy server-side processing
 
+## Event Driven Architecture
+- Using 'Server' is an instance of `EventEmitter` class
+- Observer pattern reacts to events emitted, rather than nested calling of functions
+- Event Emitter > [Emits events] > Event listener runs a callback function
+
