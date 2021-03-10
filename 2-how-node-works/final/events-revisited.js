@@ -17,7 +17,7 @@ const myEmitter = new Sales();
 myEmitter.on('newSale', stock => {
   console.log('Sale made');
   console.log(`Stock level: ${stock}`)
-});
+}); 
 
 myEmitter.on('newSale', stock => {
   console.log('Sale made again');

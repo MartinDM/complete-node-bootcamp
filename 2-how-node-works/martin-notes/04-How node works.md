@@ -17,7 +17,7 @@ Single threaded, so must avoid blocking it.
 - Initialise program
 - Top-level code executed (not callbacks)
 - Modules required
-- Register callbacs
+- Register callbacks
 - _Then_ Event Loop starts
 
 Event loop offloads to the thread pool to avoid blocking main thread  

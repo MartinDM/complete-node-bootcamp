@@ -13,12 +13,21 @@ const { query } = require('express');
 /*  Controllers */
 
 exports.aliasTopTours = async (req, res, next) => {
-    console.log('middleware');
     req.query.limit = '5';
     req.query.sort = '-ratingsAverage';
     req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
     next();
+}  
+
+// Middlewae to change the request object, returning specific Tours
+exports.aliasAceTours = async (req, res, next) => {
+    console.log('GEtting Ace tours')
+    req.query.limit = '3';
+    req.query.sort = 'price';
+    req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+    next();
 }
+
 
 exports.createTour = async (req, res) => {
   // const newTour = new Tour({})
@@ -61,6 +70,7 @@ exports.getAllTours = async (req, res) => {
       .limitFields()
       .paginate()
     // ...Store it as tours
+    // Await this from features Class
     const tours = await features.query;
 
     // Mongoose query methods if not using params ^
@@ -145,6 +155,37 @@ exports.deleteTour = async (req, res) => {
     })
   }
 }
+
+exports.getTourStats = async (req,res ) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { 'ratingsAverage': { $gte: 4.5 } }
+      },
+      {
+        $group: { 
+          _id: null,
+          avgRating: { $avg: "$ratingsAverage" },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+         }
+      },
+    ]);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats
+      }
+    })
+  } catch (err) {
+    res.status(200).json({
+      status: 'fail',
+      message: err
+    })
+  }
+}
+
 
 // Param middlware has extra argument for the param on the url
 // Only runs for paths after /tours

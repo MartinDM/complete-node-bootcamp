@@ -10,6 +10,16 @@ router.route('/top-5-cheap')
   tourController.getAllTours
 )
 
+router.route('/ace-tours')
+// use middleware to change req object
+.get(
+  tourController.aliasAceTours,
+  tourController.getAllTours
+)
+
+router.route('/stats')
+  .get(tourController.getTourStats);
+
 router.route('/') // tours
 .get(tourController.getAllTours)
 .post(tourController.createTour)
